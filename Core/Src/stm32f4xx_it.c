@@ -56,13 +56,17 @@
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
+extern DMA_HandleTypeDef hdma_sdio_rx;
+extern DMA_HandleTypeDef hdma_sdio_tx;
+extern SD_HandleTypeDef hsd;
 extern DMA_HandleTypeDef hdma_usart1_rx;
 extern DMA_HandleTypeDef hdma_usart1_tx;
 extern UART_HandleTypeDef huart1;
 extern TIM_HandleTypeDef htim1;
 
 /* USER CODE BEGIN EV */
-
+extern unsigned char bRecFlag;
+extern uint8_t SerialBuf[BUFFERSIZE];
 /* USER CODE END EV */
 
 /******************************************************************************/
@@ -187,8 +191,22 @@ void USART1_IRQHandler(void)
   /* USER CODE END USART1_IRQn 0 */
   HAL_UART_IRQHandler(&huart1);
   /* USER CODE BEGIN USART1_IRQn 1 */
-
+    USER_UART_IRQHandler(&huart1);
   /* USER CODE END USART1_IRQn 1 */
+}
+
+/**
+  * @brief This function handles SDIO global interrupt.
+  */
+void SDIO_IRQHandler(void)
+{
+  /* USER CODE BEGIN SDIO_IRQn 0 */
+
+  /* USER CODE END SDIO_IRQn 0 */
+  HAL_SD_IRQHandler(&hsd);
+  /* USER CODE BEGIN SDIO_IRQn 1 */
+
+  /* USER CODE END SDIO_IRQn 1 */
 }
 
 /**
@@ -203,6 +221,34 @@ void DMA2_Stream2_IRQHandler(void)
   /* USER CODE BEGIN DMA2_Stream2_IRQn 1 */
 
   /* USER CODE END DMA2_Stream2_IRQn 1 */
+}
+
+/**
+  * @brief This function handles DMA2 stream3 global interrupt.
+  */
+void DMA2_Stream3_IRQHandler(void)
+{
+  /* USER CODE BEGIN DMA2_Stream3_IRQn 0 */
+
+  /* USER CODE END DMA2_Stream3_IRQn 0 */
+  HAL_DMA_IRQHandler(&hdma_sdio_rx);
+  /* USER CODE BEGIN DMA2_Stream3_IRQn 1 */
+
+  /* USER CODE END DMA2_Stream3_IRQn 1 */
+}
+
+/**
+  * @brief This function handles DMA2 stream6 global interrupt.
+  */
+void DMA2_Stream6_IRQHandler(void)
+{
+  /* USER CODE BEGIN DMA2_Stream6_IRQn 0 */
+
+  /* USER CODE END DMA2_Stream6_IRQn 0 */
+  HAL_DMA_IRQHandler(&hdma_sdio_tx);
+  /* USER CODE BEGIN DMA2_Stream6_IRQn 1 */
+
+  /* USER CODE END DMA2_Stream6_IRQn 1 */
 }
 
 /**
@@ -221,5 +267,25 @@ void DMA2_Stream7_IRQHandler(void)
 
 /* USER CODE BEGIN 1 */
 
+// Goes here when a transmission is done
+void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
+{
+    // UART Tx Complete
+    if(huart == &huart1)
+    {
+        
+    }
+}
+
+// When received a whole part of message, the system goes here
+void USER_UART_IRQHandler(UART_HandleTypeDef* huart)
+{
+    // UART_IT_IDLE
+    if(huart == &huart1 && __HAL_UART_GET_FLAG(&huart1, UART_FLAG_IDLE))
+    {
+        if(bRecFlag == 0) bRecFlag=1;
+        __HAL_UART_CLEAR_IDLEFLAG(&huart1);
+    }
+}
 /* USER CODE END 1 */
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
