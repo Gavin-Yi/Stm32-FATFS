@@ -151,39 +151,6 @@ FRESULT scan_files(const TCHAR* path)
     f_closedir(&dir);   // close directory
     return res;
 }
-
-//FRESULT split_file_path(const uint8_t *file_path, char* file_name)
-//{
-//    FRESULT res;
-//    DIR dir;
-//    uint8_t path[32];
-//    uint8_t *a = path, *b = path;
-//
-//    memcpy(path, file_path, strlen((const char *)file_path));
-//    memcpy(file_name, file_path, strlen((const char *)file_path));
-//
-//    for (; ;) {
-//        while(*b != '/' && *b!= '\0')
-//        {
-//            ++b;
-//        }
-//        if(*b == '/')
-//        {
-//            a = b;
-//            ++b;
-//        }
-//        else break;
-//    }
-//    if(a!=b && *a=='/' && *b=='\0')
-//    {
-//        *a = '\0';   // This action split the path into two seperate string.
-//                     // Clever Boy!
-//        // Attempt to open the directory
-//        res = f_opendir(&dir, (const char *)path);
-//    } else res = FR_NO_PATH;
-//
-//    return res;
-//}
 /* USER CODE END 0 */
 
 /**
